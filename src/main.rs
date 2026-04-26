@@ -1,14 +1,22 @@
-use std::io;
+use std::{fmt::format, io};
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     DefaultTerminal, Frame,
     layout::{Alignment, Constraint, Direction, Layout},
+    macros::constraints,
     style::{Color, Style, Stylize},
     symbols::border,
     text::Line,
-    widgets::{Block, Borders, Padding, Paragraph, Widget},
+    widgets::{Block, BorderType, Borders, Cell, Padding, Paragraph, Row, Table, Widget},
 };
+
+struct ProcessInfo {
+    name: String,
+    pid: i32,
+    memory: f32,
+    cpu: f32,
+}
 
 fn main() -> io::Result<()> {
     ratatui::run(|terminal| App::default().run(terminal))
@@ -102,6 +110,55 @@ impl Widget for &App {
             ])
             .split(vertical_chunks[0]);
 
+        let header_block = Block::default().padding(Padding::new(10, 1, 1, 1));
+        let header_inner_area = header_block.inner(main_layout[0]);
+
+        let header_bar = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([
+                Constraint::Percentage(40),
+                Constraint::Percentage(20),
+                Constraint::Percentage(20),
+                Constraint::Percentage(20),
+            ])
+            .split(header_inner_area);
+
+        Paragraph::new("PROCESSES").render(header_bar[0], buf);
+        Paragraph::new("PID").render(header_bar[1], buf);
+        Paragraph::new("MEMORY").render(header_bar[2], buf);
+        Paragraph::new("CPU").render(header_bar[3], buf);
+
+        Block::default()
+            .borders(Borders::TOP)
+            .border_type(BorderType::Double)
+            .render(main_layout[1], buf);
+
+        let content_block = Block::default().padding(Padding::new(10, 1, 1, 1));
+        let content_area = content_block.inner(main_layout[2]);
+
+        let constraints = [
+            Constraint::Percentage(40),
+            Constraint::Percentage(20),
+            Constraint::Percentage(20),
+            Constraint::Percentage(20),
+        ];
+
+        let processes = get_processes();
+
+        let rows = processes.iter().map(|p|{
+            Row::new(vec![
+                Cell::from(p.name.as_str()),
+                Cell::from(p.pid.to_string()),
+                Cell::from(format!("{} GB", p.memory)),
+                Cell::from(format!("{}%", p.cpu)),
+            ])
+        });
+
+        let table = Table::new(rows, constraints)
+        .column_spacing(0);
+
+        table.render(content_area, buf);
+
         block.render(area, buf);
 
         let border_top_block = Block::default()
@@ -112,8 +169,6 @@ impl Widget for &App {
         let info_color = Color::Rgb(247, 181, 56);
         let mint_color = Color::Rgb(239, 156, 218);
 
-        Paragraph::new("header").render(vertical_chunks[0], buf);
-        // Paragraph::new("processes").block(Block::default().borders(Borders::BOTTOM)).render(vertical_chunks[1], buf);
         Paragraph::new("Total: 14.2 GB used / 32 GB     Processes: 312")
             .block(border_top_block.clone())
             .style(Style::default().fg(mint_color))
@@ -124,4 +179,33 @@ impl Widget for &App {
             .style(Style::default().fg(info_color))
             .render(vertical_chunks[2], buf);
     }
+}
+
+fn get_processes() -> Vec<ProcessInfo> {
+    return vec![
+        ProcessInfo {
+            name: String::from("firefox"),
+            pid: 3021,
+            memory: 1.2,
+            cpu: 10.0,
+        },
+        ProcessInfo {
+            name: String::from("obsidian"),
+            pid: 5022,
+            memory: 0.5,
+            cpu: 2.0,
+        },
+        ProcessInfo {
+            name: String::from("code"),
+            pid: 7331,
+            memory: 3.4,
+            cpu: 20.0,
+        },
+        ProcessInfo {
+            name: String::from("postgres"),
+            pid: 2000,
+            memory: 1.4,
+            cpu: 11.0,
+        },
+    ];
 }
