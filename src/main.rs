@@ -85,7 +85,7 @@ impl Widget for &App {
         let status = Line::from(" [live] ");
 
         let block = Block::bordered()
-            .title(title.left_aligned().style(Style::default().bg(title_color)))
+            .title(title.left_aligned().style(Style::default().bg(title_color).fg(Color::Rgb(43, 61, 65))))
             .title(status.right_aligned())
             // .padding(Padding::new(3, 3, 1, 1))
             .border_set(border::PLAIN);
@@ -123,10 +123,10 @@ impl Widget for &App {
             ])
             .split(header_inner_area);
 
-        Paragraph::new("PROCESSES").render(header_bar[0], buf);
-        Paragraph::new("PID").render(header_bar[1], buf);
-        Paragraph::new("MEMORY").render(header_bar[2], buf);
-        Paragraph::new("CPU").render(header_bar[3], buf);
+        Paragraph::new("PROCESS").bold().render(header_bar[0], buf);
+        Paragraph::new("PID").bold().render(header_bar[1], buf);
+        Paragraph::new("MEMORY").bold().render(header_bar[2], buf);
+        Paragraph::new("CPU").bold().render(header_bar[3], buf);
 
         Block::default()
             .borders(Borders::TOP)
