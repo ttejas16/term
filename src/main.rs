@@ -1,10 +1,9 @@
-use std::{fmt::format, io};
+use std::io;
 
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     DefaultTerminal, Frame,
-    layout::{Alignment, Constraint, Direction, Layout},
-    macros::constraints,
+    layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize},
     symbols::border,
     text::Line,
@@ -85,7 +84,11 @@ impl Widget for &App {
         let status = Line::from(" [live] ");
 
         let block = Block::bordered()
-            .title(title.left_aligned().style(Style::default().bg(title_color).fg(Color::Rgb(43, 61, 65))))
+            .title(
+                title
+                    .left_aligned()
+                    .style(Style::default().bg(title_color).fg(Color::Rgb(43, 61, 65))),
+            )
             .title(status.right_aligned())
             // .padding(Padding::new(3, 3, 1, 1))
             .border_set(border::PLAIN);
@@ -145,7 +148,7 @@ impl Widget for &App {
 
         let processes = get_processes();
 
-        let rows = processes.iter().map(|p|{
+        let rows = processes.iter().map(|p| {
             Row::new(vec![
                 Cell::from(p.name.as_str()),
                 Cell::from(p.pid.to_string()),
@@ -154,8 +157,7 @@ impl Widget for &App {
             ])
         });
 
-        let table = Table::new(rows, constraints)
-        .column_spacing(0);
+        let table = Table::new(rows, constraints).column_spacing(0);
 
         table.render(content_area, buf);
 
