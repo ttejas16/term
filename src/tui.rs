@@ -4,11 +4,12 @@ use crossterm::event::{self, Event};
 use ratatui::{
     buffer::Buffer,
     layout::{Constraint, Layout, Rect},
+    style::Stylize,
     widgets::{Block, Borders, Widget},
 };
 
 use crate::app::App;
-use crate::ui::{controls::Controls, process_table::ProcessTable, status::Status};
+use crate::ui::{controls::Controls, process_table::ProcessTable, status::Status, theme::*};
 
 pub struct Tui {}
 
@@ -33,7 +34,9 @@ impl Tui {
 
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        let root_container = Block::default().borders(Borders::ALL).title(self.app_title);
+        let root_container = Block::default()
+            .borders(Borders::ALL)
+            .title(self.app_title.bold().fg(TITLE_FG));
         let root_area = root_container.inner(area);
 
         root_container.render(area, buf);

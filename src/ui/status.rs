@@ -1,7 +1,10 @@
 use ratatui::{
     layout::{Alignment, Constraint, Flex, Layout},
+    style::Stylize,
     widgets::{Block, Borders, Padding, Paragraph, Widget},
 };
+
+use crate::ui::theme::{self, STATUS_FG};
 
 pub struct Status;
 
@@ -12,7 +15,7 @@ impl Widget for Status {
     {
         let container_block = Block::default()
             .borders(Borders::TOP)
-            .padding(Padding::uniform(1));
+            .padding(Padding::new(3, 3, 1, 1));
 
         let container_area = container_block.inner(area);
 
@@ -22,7 +25,14 @@ impl Widget for Status {
             .flex(Flex::SpaceBetween)
             .areas(container_area);
 
-        Paragraph::new("Total: 14.2 GB used / 32 GB").alignment(Alignment::Left).render(left, buf);
-        Paragraph::new("Running processes: 312").alignment(Alignment::Right).render(right, buf);
+        Paragraph::new("Total: 14.2 GB used / 32 GB")
+            .bold()
+            .fg(theme::STATUS_FG)
+            .alignment(Alignment::Left)
+            .render(left, buf);
+        Paragraph::new("Running processes: 312")
+            .fg(STATUS_FG)
+            .alignment(Alignment::Right)
+            .render(right, buf);
     }
 }

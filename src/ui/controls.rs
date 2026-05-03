@@ -1,4 +1,9 @@
-use ratatui::widgets::{Block, Borders, Padding, Paragraph, Widget};
+use ratatui::{
+    style::Stylize,
+    widgets::{Block, Borders, Padding, Paragraph, Widget},
+};
+
+use crate::ui::theme;
 
 pub struct Controls;
 
@@ -15,6 +20,8 @@ impl Widget for Controls {
 
         container_block.render(area, buf);
 
-        Paragraph::new("[q]quit  [/]filter  [s]sort  [↑↓]scroll  [r]refresh").render(container_area, buf);
+        Paragraph::new("[q]quit  [/]filter  [s]sort  [↑↓]scroll  [r]refresh")
+            .fg(theme::INFO_FG)
+            .render(container_area, buf);
     }
 }

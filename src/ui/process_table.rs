@@ -1,6 +1,6 @@
 use ratatui::{
     layout::{Constraint, Layout, Rect},
-    style::{Style, Stylize},
+    style::Stylize,
     widgets::{Block, Borders, Cell, Padding, Row, Table, Widget},
 };
 
@@ -37,7 +37,8 @@ impl Widget for ProcessTable {
         .areas(container_area);
 
         let column_constraints = [
-            Constraint::Percentage(40),
+            Constraint::Percentage(20),
+            Constraint::Percentage(20),
             Constraint::Percentage(20),
             Constraint::Percentage(20),
             Constraint::Percentage(20),
@@ -46,6 +47,7 @@ impl Widget for ProcessTable {
         let header_row = Row::new([
             Cell::from("PROCESS").bold(),
             Cell::from("PID").bold(),
+            Cell::from("USER").bold(),
             Cell::from("MEMORY (GB)").bold(),
             Cell::from("CPU %").bold(),
         ]);
@@ -61,6 +63,7 @@ impl Widget for ProcessTable {
             Row::new([
                 Cell::from(p.name.as_str()),
                 Cell::from(p.pid.to_string()),
+                Cell::from("pew"),
                 Cell::from(format!("{} GB", p.memory)),
                 Cell::from(format!("{}%", p.cpu)),
             ])
