@@ -1386,6 +1386,7 @@ dependencies = [
 name = "term"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "color-eyre",
  "crossterm",
  "ratatui",
