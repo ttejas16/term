@@ -4,21 +4,21 @@ use ratatui::{
     widgets::{Block, Borders, Cell, Padding, Row, Table, Widget},
 };
 
-struct ProcessInfo {
-    name: String,
-    pid: i32,
-    memory: f32,
-    cpu: f32,
-}
-pub struct ProcessTable {}
+use crate::app::App;
 
-impl ProcessTable {
-    pub fn new() -> Self {
-        ProcessTable {}
+pub struct ProcessTable<'a> {
+    app: &'a App
+}
+
+impl<'a> ProcessTable<'a> {
+    pub fn new(app: &'a App) -> Self {
+        ProcessTable {
+            app
+        }
     }
 }
 
-impl Widget for ProcessTable {
+impl<'a> Widget for ProcessTable<'a> {
     fn render(self, area: ratatui::prelude::Rect, buf: &mut ratatui::prelude::Buffer)
     where
         Self: Sized,
@@ -58,47 +58,17 @@ impl Widget for ProcessTable {
         let divider = Block::default().borders(Borders::TOP);
         divider.render(layout[1], buf);
 
-        let processes = get_processes();
-        let body_rows = processes.iter().map(|p| {
+        let body_rows = self.app.process_data.iter().map(|p| {
             Row::new([
                 Cell::from(p.name.as_str()),
                 Cell::from(p.pid.to_string()),
                 Cell::from("pew"),
-                Cell::from(format!("{} GB", p.memory)),
-                Cell::from(format!("{}%", p.cpu)),
+                Cell::from(format!("{} GB", p.memory_usage)),
+                Cell::from(format!("{}%", p.cpu_usage)),
             ])
         });
 
         let body_table = Table::new(body_rows, column_constraints);
         body_table.render(layout[2], buf);
     }
-}
-
-fn get_processes() -> Vec<ProcessInfo> {
-    return vec![
-        ProcessInfo {
-            name: String::from("firefox"),
-            pid: 3021,
-            memory: 1.2,
-            cpu: 10.0,
-        },
-        ProcessInfo {
-            name: String::from("obsidian"),
-            pid: 5022,
-            memory: 0.5,
-            cpu: 2.0,
-        },
-        ProcessInfo {
-            name: String::from("code"),
-            pid: 7331,
-            memory: 3.4,
-            cpu: 20.0,
-        },
-        ProcessInfo {
-            name: String::from("postgres"),
-            pid: 2000,
-            memory: 1.4,
-            cpu: 11.0,
-        },
-    ];
 }

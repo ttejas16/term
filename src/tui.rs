@@ -1,4 +1,7 @@
-use std::{io::Result, time::Duration};
+use std::{
+    io::Result,
+    time::{Duration, Instant},
+};
 
 use crossterm::event::{self, Event};
 use ratatui::{
@@ -16,14 +19,23 @@ pub struct Tui {}
 impl Tui {
     pub fn run(app: &mut App) -> Result<()> {
         let mut terminal = ratatui::init();
+        let mut last_tick = Instant::now();
+        let tick_rate = Duration::from_secs(2);
 
         while !app.should_exit {
             terminal.draw(|frame| frame.render_widget(&*app, frame.area()))?;
 
-            if event::poll(Duration::from_millis(200))? {
+            let timeout = tick_rate.saturating_sub(last_tick.elapsed());
+
+            if event::poll(timeout)? {
                 if let Event::Key(key) = event::read()? {
                     app.key_handler(key.code);
                 }
+            }
+
+            if last_tick.elapsed() >= tick_rate {
+                app.tick();
+                last_tick = Instant::now();
             }
         }
 
@@ -48,7 +60,7 @@ impl Widget for &App {
         ])
         .areas(root_area);
 
-        ProcessTable::new().render(body, buf);
+        ProcessTable::new(&self).render(body, buf);
         Status.render(status, buf);
         Controls.render(controls, buf);
     }
