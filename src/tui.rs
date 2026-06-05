@@ -61,7 +61,7 @@ impl Widget for &App {
         .areas(root_area);
 
         ProcessTable::new(&self).render(body, buf);
-        Status.render(status, buf);
-        Controls.render(controls, buf);
+        Status::new(&self).render(status, buf);
+        Controls::new(&self).render(controls, buf);
     }
 }

@@ -4,7 +4,7 @@ use ratatui::{
     widgets::{Block, Borders, Cell, Padding, Row, Table, Widget},
 };
 
-use crate::app::App;
+use crate::{app::App, utils::formatter::{bytes_to_gb, format_bytes}};
 
 pub struct ProcessTable<'a> {
     app: &'a App
@@ -48,7 +48,7 @@ impl<'a> Widget for ProcessTable<'a> {
             Cell::from("PROCESS").bold(),
             Cell::from("PID").bold(),
             Cell::from("USER").bold(),
-            Cell::from("MEMORY (GB)").bold(),
+            Cell::from("MEMORY").bold(),
             Cell::from("CPU %").bold(),
         ]);
 
@@ -62,8 +62,8 @@ impl<'a> Widget for ProcessTable<'a> {
             Row::new([
                 Cell::from(p.name.as_str()),
                 Cell::from(p.pid.to_string()),
-                Cell::from("pew"),
-                Cell::from(format!("{} GB", p.memory_usage)),
+                Cell::from(p.user.clone()),
+                Cell::from(format!("{}", format_bytes(p.memory_usage))),
                 Cell::from(format!("{}%", p.cpu_usage)),
             ])
         });
