@@ -4,7 +4,7 @@ use ratatui::{
     widgets::{Block, Borders, Cell, Padding, Row, Table, Widget},
 };
 
-use crate::{app::App, utils::formatter::{bytes_to_gb, format_bytes}};
+use crate::{app::App, utils::formatter::{format_bytes}};
 
 pub struct ProcessTable<'a> {
     app: &'a App

@@ -11,7 +11,7 @@ use ratatui::{
     widgets::{Block, Borders, Widget},
 };
 
-use crate::app::App;
+use crate::{app::App, constants::threshold::POLL_INTERVAL};
 use crate::ui::{controls::Controls, process_table::ProcessTable, status::Status, theme::*};
 
 pub struct Tui {}
@@ -20,7 +20,7 @@ impl Tui {
     pub fn run(app: &mut App) -> Result<()> {
         let mut terminal = ratatui::init();
         let mut last_tick = Instant::now();
-        let tick_rate = Duration::from_secs(2);
+        let tick_rate = Duration::from_secs(POLL_INTERVAL);
 
         while !app.should_exit {
             terminal.draw(|frame| frame.render_widget(&*app, frame.area()))?;
